@@ -54,10 +54,7 @@ git clone https://github.com/Azure-Samples/dotnet-migration-copilot-samples.git 
 git clone https://github.com/Azure-Samples/dotnet-migration-copilot-samples.git legacy\dotnet
 ```
 
-Abre VS Code en la raíz del repo del workshop (no dentro de `legacy/dotnet`):
-```bash
-code .
-```
+> Verifica que VS Code sigue abierto en la **raíz del workshop** (no dentro de `legacy/dotnet`). El árbol de archivos debe mostrar `labs/`, `infra/`, `legacy/`, etc. en el nivel superior.
 
 Explora la estructura antes de usar Copilot:
 ```
