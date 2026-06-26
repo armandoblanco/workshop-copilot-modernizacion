@@ -37,7 +37,19 @@ flowchart LR
 
 ## Paso 1 — Credenciales de Azure
 
-El facilitador entrega estos valores. Configúralos en tu terminal:
+> El facilitador te entrega estos valores de forma individual al inicio del lab. No los compartas con otros participantes.
+
+| Parámetro | Valor que recibirás |
+|---|---|
+| Subscription ID | Proporcionado por el facilitador |
+| Tenant ID | Proporcionado por el facilitador |
+| Client ID (SP) | `sp-evertec-lab-NN` — NN es tu número de participante |
+| Client Secret | Proporcionado por el facilitador |
+| Resource Group | `rg-evertec-lab-NN` — ya creado, **no ejecutes** `az group create` |
+| Región | `swedencentral` |
+| Participant Prefix | `eNN` (ej: `e01`, `e12`, `e42`) |
+
+Configura las variables en tu terminal reemplazando los valores que te entregó el facilitador:
 
 **macOS / Linux / Codespaces:**
 ```bash
@@ -45,7 +57,8 @@ export AZURE_TENANT_ID="<del facilitador>"
 export AZURE_CLIENT_ID="<del facilitador>"
 export AZURE_CLIENT_SECRET="<del facilitador>"
 export AZURE_SUBSCRIPTION_ID="<del facilitador>"
-export PARTICIPANT_PREFIX="<tus iniciales, ej: arb>"
+export PARTICIPANT_PREFIX="eNN"          # reemplaza NN por tu número (ej: e07)
+export RG="rg-evertec-lab-$PARTICIPANT_PREFIX"
 ```
 
 **Windows (PowerShell):**
@@ -54,7 +67,8 @@ $env:AZURE_TENANT_ID       = "<del facilitador>"
 $env:AZURE_CLIENT_ID       = "<del facilitador>"
 $env:AZURE_CLIENT_SECRET   = "<del facilitador>"
 $env:AZURE_SUBSCRIPTION_ID = "<del facilitador>"
-$env:PARTICIPANT_PREFIX    = "<tus iniciales>"
+$env:PARTICIPANT_PREFIX    = "eNN"       # reemplaza NN por tu número (ej: e07)
+$RG = "rg-evertec-lab-$env:PARTICIPANT_PREFIX"
 ```
 
 ---
@@ -85,21 +99,23 @@ az account show
 
 ---
 
-## Paso 3 — Crear el Resource Group
+## Paso 3 — Verificar el Resource Group
+
+El Resource Group ya fue pre-creado por el facilitador. Sólo verifica que está disponible:
 
 **macOS / Linux / Codespaces:**
 ```bash
-RG="rg-workshop-modernizacion-$PARTICIPANT_PREFIX"
-az group create --name $RG --location eastus
 echo "Resource Group: $RG"
+az group show --name $RG --query "{nombre:name, region:location, estado:properties.provisioningState}"
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$RG = "rg-workshop-modernizacion-$env:PARTICIPANT_PREFIX"
-az group create --name $RG --location eastus
 Write-Host "Resource Group: $RG"
+az group show --name $RG --query "{nombre:name, region:location, estado:properties.provisioningState}"
 ```
+
+> **No ejecutes** `az group create`. El RG `rg-evertec-lab-NN` ya existe con el Service Principal `sp-evertec-lab-NN` asignado (roles `Contributor` + `User Access Administrator` sobre el RG).
 
 ---
 
@@ -115,8 +131,9 @@ En Copilot Chat (Modo Agente):
 Contexto:
 - Tenemos dos apps modernizadas: una .NET 8 Minimal API y una Spring Boot 3.x / Java 21
 - Ambas corren en contenedores Docker en el puerto 8080
-- El participantPrefix para este deploy es: <tus iniciales>
-- La infraestructura debe estar en un único main.bicep en la carpeta infra/
+- El participantPrefix para este deploy es: `$PARTICIPANT_PREFIX` (ej: `e07`)
+- La infraestructura se despliega en el Resource Group: `rg-evertec-lab-{prefix}`
+- La región es `swedencentral`
 
 Recursos necesarios:
 - Log Analytics Workspace

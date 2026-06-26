@@ -1,5 +1,5 @@
 using './main.bicep'
 
-// Cambia por tus iniciales (2-6 letras minúsculas, sin números)
-param participantPrefix = 'arb'
-param location = 'eastus'
+// Cambia NN por tu número de participante (ej: e07, e12, e42)
+param participantPrefix = 'eNN'
+param location = 'swedencentral'
