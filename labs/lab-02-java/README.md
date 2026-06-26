@@ -20,7 +20,7 @@ Al terminar tendrás la app Spring Framework completamente modernizada a Spring 
 
 ## Código fuente
 
-[`spring-petclinic/spring-framework-petclinic`](https://github.com/spring-petclinic/spring-framework-petclinic) — Fork que mantiene la versión con configuración XML pura de Spring Framework, sin Spring Boot. JSP + Spring MVC + Hibernate + WAR deployment en Jetty. Tiene el stack legacy típico que `@spring-legacy-assessment` va a analizar.
+[`Azure-Samples/java-migration-copilot-samples — ContosoUniversity`](https://github.com/Azure-Samples/java-migration-copilot-samples/tree/main/ContosoUniversity) — Aplicación de gestión universitaria sobre .NET Framework 4.8 con dependencias on-premise (MSMQ, sistema de archivos local). Tiene `Global.asax`, `Web.config`, `packages.config`, `Controllers/`, `Services/` y `Uploads/`. Es el proyecto de referencia del taller para demostrar modernización con los agentes del playbook.
 
 ---
 
@@ -42,69 +42,37 @@ flowchart LR
 
 ---
 
-## Paso 1 — Configurar Java 8 como JDK de compilación
-
-El proyecto legacy usa APIs que solo existen en Java 8. Apunta `JAVA_HOME` al Temurin 8 antes de compilar:
-
-**macOS:**
-```bash
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-java -version   # debe mostrar: openjdk version "1.8.x" Temurin
-```
-
-**Windows (PowerShell):**
-```powershell
-$env:JAVA_HOME = $env:JAVA_HOME_8
-$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
-java -version
-```
-
-**Codespaces:**
-```bash
-export JAVA_HOME=$JAVA_HOME_8
-java -version
-```
-
----
-
-## Paso 2 — Clonar y verificar que compila en Java 8
+## Paso 1 — Clonar el código legacy
 
 **macOS / Linux / Codespaces:**
 ```bash
-git clone https://github.com/spring-petclinic/spring-framework-petclinic.git legacy/java
-cd legacy/java
-./mvnw clean install -DskipTests
+git clone https://github.com/Azure-Samples/java-migration-copilot-samples.git legacy/java
 ```
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/spring-petclinic/spring-framework-petclinic.git legacy\java
-cd legacy\java
-.\mvnw.cmd clean install -DskipTests
+git clone https://github.com/Azure-Samples/java-migration-copilot-samples.git legacy\java
 ```
 
-`BUILD SUCCESS` confirma que el punto de partida legacy está correcto. Vuelve a la raíz del workshop:
+> Verifica que VS Code sigue abierto en la **raíz del workshop**. El árbol de archivos debe mostrar `labs/`, `infra/`, `legacy/`, etc. en el nivel superior.
 
-```bash
-cd ../..   # macOS/Linux
-cd ..\..   # Windows
-code .
+El proyecto objetivo está en `legacy/java/ContosoUniversity/`. Explora la estructura antes de usar Copilot:
 ```
-
-Explora la estructura antes de usar Copilot:
-```
-legacy/java/
-├── src/main/java/          ← Código Java con javax.* imports
-├── src/main/webapp/WEB-INF/
-│   ├── applicationContext.xml   ← Configuración XML de Spring (desaparece en Fase 3)
-│   └── mvc-core-config.xml      ← MVC config en XML
-├── pom.xml                 ← Dependencias con Spring Framework 5.x, Java 8 target
-└── src/main/resources/
+legacy/java/ContosoUniversity/
+├── Controllers/         ← StudentController, CourseController, InstructorController...
+├── Models/              ← Entidades de dominio (Student, Course, Department, Instructor)
+├── Data/                ← SchoolContext + inicializador de BD
+├── Services/            ← NotificationService con MSMQ — dependencia on-premise a migrar
+├── Uploads/             ← Almacenamiento local de materiales docentes → Azure Blob Storage
+├── App_Start/           ← RouteConfig, FilterConfig
+├── Web.config           ← Connection string a LocalDB + config MSMQ
+├── Global.asax          ← Entry point legacy
+└── packages.config      ← NuGet legacy
 ```
 
 ---
 
-## Paso 3 — Fase 1: Assessment
+## Paso 2 — Fase 1: Assessment
 
 > Agente: `@spring-legacy-assessment` — Fase 1 del playbook
 

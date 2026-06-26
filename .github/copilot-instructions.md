@@ -7,7 +7,7 @@ Este repositorio es un taller de modernización de aplicaciones legacy basado en
 
 Contiene dos proyectos legacy en la carpeta `legacy/`:
 - `legacy/dotnet/` — ASP.NET MVC 5 sobre .NET Framework 4.8.2 (ContosoUniversity)
-- `legacy/java/`   — Spring Framework + JSP + Java 8 (spring-framework-petclinic)
+- `legacy/java/`   — ContosoUniversity en .NET Framework 4.8 (Azure-Samples/java-migration-copilot-samples)
 
 El código en `legacy/` es **read-only**. Los agentes lo leen pero nunca lo modifican.
 

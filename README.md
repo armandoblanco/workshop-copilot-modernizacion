@@ -70,7 +70,7 @@ flowchart TD
 | App | Repo fuente | Stack legacy | Stack modernizado |
 |-----|------------|--------------|-------------------|
 | .NET | [Azure-Samples/dotnet-migration-copilot-samples](https://github.com/Azure-Samples/dotnet-migration-copilot-samples) | ASP.NET MVC 5 / .NET Framework 4.8.2 | .NET 8 Minimal API |
-| Java | [spring-petclinic/spring-framework-petclinic](https://github.com/spring-petclinic/spring-framework-petclinic) | Spring Framework + JSP / Java 8 | Spring Boot 3.x / Java 21 |
+| Java | [Azure-Samples/java-migration-copilot-samples — ContosoUniversity](https://github.com/Azure-Samples/java-migration-copilot-samples/tree/main/ContosoUniversity) | .NET Framework 4.8 / ASP.NET MVC | Spring Boot 3.x / Java 21 |
 
 ---
 
@@ -223,7 +223,7 @@ workshop-copilot-modernizacion/
 │   └── lab-03-iac/README.md             # Guía paso a paso IaC + deploy
 ├── legacy/                               # Código fuente legacy (read-only)
 │   ├── dotnet/                           # ContosoUniversity — clonar aquí
-│   └── java/                            # spring-framework-petclinic — clonar aquí
+│   └── java/                            # ContosoUniversity (java-migration-copilot-samples) — clonar aquí
 ├── cleanup.sh
 └── README.md
 ```
@@ -247,7 +247,7 @@ workshop-copilot-modernizacion/
 - [QUICKSTART-dotnet.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-dotnet.md)
 - [QUICKSTART-java.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-java.md)
 - [dotnet-migration-copilot-samples (ContosoUniversity)](https://github.com/Azure-Samples/dotnet-migration-copilot-samples)
-- [spring-framework-petclinic](https://github.com/spring-petclinic/spring-framework-petclinic)
+- [java-migration-copilot-samples (ContosoUniversity)](https://github.com/Azure-Samples/java-migration-copilot-samples/tree/main/ContosoUniversity)
 
 ---
 
