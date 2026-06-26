@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-Recorrer las **Fases 1, 2 y 3** del playbook de modernización para una app ASP.NET MVC 4.x, usando los agentes `@dotnet-assessment`, `@dotnet-planning` y `@dotnet-migration`.
+Recorrer las **Fases 1, 2 y 3** del playbook de modernización para una app ASP.NET MVC 5 / .NET Framework 4.8.2, usando los agentes `@dotnet-assessment`, `@dotnet-planning` y `@dotnet-migration`.
 
 Al terminar tendrás un reporte de deuda técnica, un conjunto de ADRs con las decisiones de arquitectura, y la app modernizada en .NET 8 con un Dockerfile listo para Azure Container Apps.
 
@@ -20,7 +20,7 @@ Al terminar tendrás un reporte de deuda técnica, un conjunto de ADRs con las d
 
 ## Código fuente
 
-[`dotnet-architecture/eShopModernizing`](https://github.com/dotnet-architecture/eShopModernizing) — App ASP.NET MVC 4.x sobre .NET Framework. Tiene `Global.asax`, `Web.config`, `packages.config`, dependencias de `System.Web.*`, y Entity Framework 6. Representa el stack que el agente va a analizar y transformar.
+[`Azure-Samples/dotnet-migration-copilot-samples`](https://github.com/Azure-Samples/dotnet-migration-copilot-samples) — App **ContosoUniversity**, ASP.NET MVC 5 sobre .NET Framework 4.8.2. Tiene `Global.asax`, `Web.config`, `packages.config`, dependencias de `System.Web.*`, Entity Framework Core 3.1, MSMQ y acceso a sistema de archivos local. Representa el stack legacy con dependencias on-premise que el agente va a modernizar hacia Azure.
 
 ---
 
@@ -46,12 +46,12 @@ flowchart LR
 
 **macOS / Linux / Codespaces:**
 ```bash
-git clone https://github.com/dotnet-architecture/eShopModernizing.git legacy/dotnet
+git clone https://github.com/Azure-Samples/dotnet-migration-copilot-samples.git legacy/dotnet
 ```
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/dotnet-architecture/eShopModernizing.git legacy\dotnet
+git clone https://github.com/Azure-Samples/dotnet-migration-copilot-samples.git legacy\dotnet
 ```
 
 Abre VS Code en la raíz del repo del workshop (no dentro de `legacy/dotnet`):
@@ -61,11 +61,14 @@ code .
 
 Explora la estructura antes de usar Copilot:
 ```
-legacy/dotnet/eShopWebMVC/
-├── Controllers/         ← CatalogController.cs — módulo que vamos a migrar
-├── Models/              ← Entidades de dominio
-├── App_Start/           ← RouteConfig, FilterConfig — pattern legacy sin equivalente en .NET 8
-├── Web.config           ← Configuración XML — se reemplaza con appsettings.json
+legacy/dotnet/ContosoUniversity/
+├── Controllers/         ← StudentController, CourseController, InstructorController...
+├── Models/              ← Entidades de dominio (Student, Course, Department, Instructor)
+├── Data/                ← SchoolContext (EF Core 3.1) + inicializador de BD
+├── Services/            ← NotificationService con MSMQ — dependencia on-premise a migrar
+├── Uploads/             ← Almacenamiento local de materiales docentes → Azure Blob Storage
+├── App_Start/           ← RouteConfig, FilterConfig — sin equivalente en .NET 8
+├── Web.config           ← Connection string a LocalDB + config MSMQ
 ├── Global.asax          ← Entry point legacy — reemplazado por Program.cs
 └── packages.config      ← NuGet legacy — migra a PackageReference
 ```
@@ -82,7 +85,7 @@ En Copilot Chat (Modo Agente):
 @dotnet-assessment Analiza el sistema en legacy/dotnet/
 ```
 
-El agente detecta: versión de .NET Framework, tipo de app, APIs deprecadas o removidas en .NET 8 (`System.Web.HttpContext`, WCF, Remoting), paquetes NuGet legacy y su equivalente moderno, secciones de `Web.config` que no migran 1:1, y tests existentes.
+El agente detecta: versión de .NET Framework, tipo de app, APIs deprecadas o removidas en .NET 8 (`System.Web.HttpContext`, MSMQ, Remoting), paquetes NuGet legacy y su equivalente moderno, secciones de `Web.config` que no migran 1:1, dependencias on-premise (MSMQ → Azure Service Bus, sistema de archivos → Azure Blob Storage), y tests existentes.
 
 Espera a que produzca los entregables en `docs/`:
 
@@ -114,7 +117,8 @@ El agente lee los outputs de la Fase 1 y te hace preguntas sobre decisiones crí
 
 - **Target framework:** .NET 8 LTS
 - **Tipo de proyecto target:** ASP.NET Core Minimal API
-- **WCF (si existe):** REST con ASP.NET Core
+- **MSMQ:** Azure Service Bus (mensajería cloud-native)
+- **Almacenamiento local (Uploads/):** Azure Blob Storage
 - **Estrategia:** greenfield (nueva solución en `src/`)
 - **Hosting target:** Azure Container Apps (contenedor Linux)
 
@@ -133,7 +137,7 @@ docs/
 └── adr/
     ├── ADR-001-target-framework.md        .NET 8 LTS
     ├── ADR-002-tipo-proyecto-target.md    ASP.NET Core Minimal API
-    ├── ADR-003-wcf-replacement.md         REST con ASP.NET Core (si aplica)
+    ├── ADR-003-msmq-replacement.md        Azure Service Bus
     ├── ADR-004-config-strategy.md         appsettings.json + Options pattern
     ├── ADR-005-orm-strategy.md            EF Core 8 (InMemory para el taller)
     ├── ADR-006-auth-strategy.md           Sin auth para el taller (scope reducido)
@@ -155,44 +159,44 @@ En Copilot Chat (Modo Agente):
 @dotnet-migration Ejecuta la migración del sistema legacy
 ```
 
-El agente lee `docs/ARQUITECTURA-TARGET.md` + los ADRs + `docs/features/`, y genera el código moderno feature por feature en `src/`. El agente decide el nombre de la solución — típicamente `eShopModern` o similar. Cuando empiece a generar archivos, anota el nombre real que usó porque lo necesitarás en los pasos siguientes.
+El agente lee `docs/ARQUITECTURA-TARGET.md` + los ADRs + `docs/features/`, y genera el código moderno feature por feature en `src/`. El agente decide el nombre de la solución — típicamente `ContosoUniversityModern` o similar. Cuando empiece a generar archivos, anota el nombre real que usó porque lo necesitarás en los pasos siguientes.
 
 La estructura generada será similar a:
 
 ```
 src/
-├── eShopModern.sln
-├── eShopModern.Api/              ASP.NET Core Minimal API endpoints
-├── eShopModern.Application/      Use cases + DTOs
-├── eShopModern.Domain/           Entities + Value Objects
-├── eShopModern.Infrastructure/   EF Core 8 InMemory + repositorios
-└── eShopModern.Tests/
+├── ContosoUniversityModern.sln
+├── ContosoUniversityModern.Api/              ASP.NET Core Minimal API endpoints
+├── ContosoUniversityModern.Application/      Use cases + DTOs
+├── ContosoUniversityModern.Domain/           Entities + Value Objects
+├── ContosoUniversityModern.Infrastructure/   EF Core 8 InMemory + repositorios
+└── ContosoUniversityModern.Tests/
     ├── UnitTests/
     └── IntegrationTests/
 ```
 
-Trabaja feature por feature: **no acumula cambios sin compilar**. Sustituye `eShopModern` por el nombre real que el agente generó:
+Trabaja feature por feature: **no acumula cambios sin compilar**. Sustituye `ContosoUniversityModern` por el nombre real que el agente generó:
 
 **macOS / Linux / Codespaces:**
 ```bash
-dotnet build src/eShopModern.sln
+dotnet build src/ContosoUniversityModern.sln
 ```
 
 **Windows (PowerShell):**
 ```powershell
-dotnet build src\eShopModern.sln
+dotnet build src\ContosoUniversityModern.sln
 ```
 
 Cuando termine, corre la app:
 
 **macOS / Linux / Codespaces:**
 ```bash
-dotnet run --project src/eShopModern.Api
+dotnet run --project src/ContosoUniversityModern.Api
 ```
 
 **Windows (PowerShell):**
 ```powershell
-dotnet run --project src\eShopModern.Api
+dotnet run --project src\ContosoUniversityModern.Api
 ```
 
 Verifica en el navegador: `http://localhost:8080/health` → debe responder `{ "status": "Healthy" }`.

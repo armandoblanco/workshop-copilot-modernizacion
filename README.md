@@ -69,7 +69,7 @@ flowchart TD
 
 | App | Repo fuente | Stack legacy | Stack modernizado |
 |-----|------------|--------------|-------------------|
-| .NET | [dotnet-architecture/eShopModernizing](https://github.com/dotnet-architecture/eShopModernizing) | ASP.NET MVC 4.x / .NET Framework | .NET 8 Minimal API |
+| .NET | [Azure-Samples/dotnet-migration-copilot-samples](https://github.com/Azure-Samples/dotnet-migration-copilot-samples) | ASP.NET MVC 5 / .NET Framework 4.8.2 | .NET 8 Minimal API |
 | Java | [spring-petclinic/spring-framework-petclinic](https://github.com/spring-petclinic/spring-framework-petclinic) | Spring Framework + JSP / Java 8 | Spring Boot 3.x / Java 21 |
 
 ---
@@ -222,7 +222,7 @@ workshop-copilot-modernizacion/
 │   ├── lab-02-java/README.md             # Guía paso a paso Lab Java
 │   └── lab-03-iac/README.md             # Guía paso a paso IaC + deploy
 ├── legacy/                               # Código fuente legacy (read-only)
-│   ├── dotnet/                           # eShopModernizing — clonar aquí
+│   ├── dotnet/                           # ContosoUniversity — clonar aquí
 │   └── java/                            # spring-framework-petclinic — clonar aquí
 ├── cleanup.sh
 └── README.md
@@ -246,7 +246,7 @@ workshop-copilot-modernizacion/
 - [legacy-modernization-playbook](https://github.com/armandoblanco/legacy-modernization-playbook)
 - [QUICKSTART-dotnet.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-dotnet.md)
 - [QUICKSTART-java.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-java.md)
-- [eShopModernizing](https://github.com/dotnet-architecture/eShopModernizing)
+- [dotnet-migration-copilot-samples (ContosoUniversity)](https://github.com/Azure-Samples/dotnet-migration-copilot-samples)
 - [spring-framework-petclinic](https://github.com/spring-petclinic/spring-framework-petclinic)
 
 ---
