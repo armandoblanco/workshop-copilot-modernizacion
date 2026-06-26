@@ -181,7 +181,7 @@ Presiona `Ctrl+Alt+I` (Windows/Linux) o `Cmd+Alt+I` (Mac), o haz clic en el íco
 
 En la parte superior del panel de chat, haz clic en el selector de modo. Las opciones son **Ask**, **Edit** y **Agent**. Selecciona **Agent**.
 
-![Selector de modo](https://docs.github.com/assets/cb-183170/images/help/copilot/copilot-chat-agent-mode.png)
+> El selector de modo está en la parte superior izquierda del panel de Copilot Chat, junto al campo de texto del prompt.
 
 **3. Seleccionar el agente del taller**
 
