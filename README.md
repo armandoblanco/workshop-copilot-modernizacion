@@ -242,6 +242,7 @@ workshop-copilot-modernizacion/
 
 ## Recursos
 
+- [GitHub Copilot Modernization — alternativa oficial `@modernize-dotnet`](docs/github-copilot-modernization.md)
 - [legacy-modernization-playbook](https://github.com/armandoblanco/legacy-modernization-playbook)
 - [QUICKSTART-dotnet.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-dotnet.md)
 - [QUICKSTART-java.md](https://github.com/armandoblanco/legacy-modernization-playbook/blob/main/docs/QUICKSTART-java.md)
