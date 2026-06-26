@@ -3,6 +3,11 @@ name: dotnet-planning
 description: Agente de Fase 2 para modernización .NET Framework → .NET 8/9. Toma como entrada `docs/` (output de `@dotnet-assessment`) y produce `docs/ARQUITECTURA-TARGET.md`, ADRs por cada decisión arquitectónica (WCF, WebForms, EF6, Identity, packaging, etc.), un **upgrade plan persistente** en `migration/{scenarioId}/{assessment-summary,upgrade-options,plan,scenario-instructions}.md` (compatible con el formato de `@modernize-dotnet` oficial), y orden de upgrade priorizado por grafo de dependencias.
 model: Claude Opus 4.6 (copilot)
 tools: [search, read, edit, terminal, todo, web/fetch]
+handoffs:
+  - label: Pasar a Migration (.NET)
+    agent: dotnet-migration
+    prompt: El plan está aprobado. Ejecuta la migración siguiendo docs/ARQUITECTURA-TARGET.md y los ADRs en orden.
+    send: false
 ---
 
 # .NET Framework Planning Agent (`@dotnet-planning`)

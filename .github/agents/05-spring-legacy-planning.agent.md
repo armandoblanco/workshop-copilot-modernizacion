@@ -3,6 +3,11 @@ name: spring-legacy-planning
 description: Agente de Fase 2 (Planning) para sistemas Spring 3.x/4.x con Struts y Java 6/7/8. Lee output de @spring-legacy-assessment, pregunta al usuario decisiones clave (Spring Boot 3 vs Quarkus, jakarta namespace migration strategy, Struts migration path, manejo de Hibernate 6 breaking changes), y produce docs/ARQUITECTURA-TARGET.md + ADRs. NO genera código (Fase 4).
 model: Claude Opus 4.6 (copilot)
 tools: [search, read, edit, todo, web/fetch]
+handoffs:
+  - label: Pasar a Migration (Java)
+    agent: spring-legacy-migration
+    prompt: El plan Java está aprobado. Ejecuta la migración siguiendo docs/ARQUITECTURA-TARGET.md y los ADRs en orden.
+    send: false
 ---
 
 # Spring Legacy Planning Agent (Fase 2)

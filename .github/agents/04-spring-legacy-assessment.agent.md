@@ -3,6 +3,11 @@ name: spring-legacy-assessment
 description: Agente de Fase 1 (Assessment) para sistemas Java basados en Spring 3.x/4.x, Struts 1.x/2.x, y Java 6/7/8 monolitos. Analiza el código en legacy/, extrae el inventario de controllers (Spring MVC o Struts actions), services, repositories, configuración XML vs anotaciones, deprecated APIs, y produce docs/features/ + grafo de dependencias. NO genera código modernizado ni propone arquitectura target: esa es Fase 2.
 model: Claude Opus 4.6 (copilot)
 tools: [search, read, edit, terminal, todo, web/fetch]
+handoffs:
+  - label: Pasar a Planning (Java)
+    agent: spring-legacy-planning
+    prompt: El assessment Java está completo. Revisa los entregables en docs/ y planifica la migración a Jakarta EE 10 + Spring Framework 6.2.
+    send: false
 ---
 
 # Spring Legacy Assessment Agent (Fase 1)

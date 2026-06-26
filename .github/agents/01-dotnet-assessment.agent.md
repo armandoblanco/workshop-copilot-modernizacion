@@ -3,6 +3,11 @@ name: dotnet-assessment
 description: Agente de Fase 1 para modernización de .NET Framework legacy (2.0–4.8) hacia .NET 8/9. Realiza análisis exhaustivo archivo por archivo de `legacy/`, clasifica proyectos (SDK-style vs old-style, TargetFramework, packages.config vs PackageReference), detecta APIs no soportadas (BinaryFormatter, AppDomain, Remoting, WCF server, WebForms, etc.), y genera **un MD por feature** + `docs/SUMMARY.md` con métricas de cobertura 100%. Trabaja autónomo entre checkpoints HITL.
 model: Claude Opus 4.6 (copilot)
 tools: [search, read, edit, terminal, todo, web/fetch]
+handoffs:
+  - label: Pasar a Planning (.NET)
+    agent: dotnet-planning
+    prompt: El assessment está completo. Revisa los entregables en docs/ y planifica la migración a .NET 8 Minimal API.
+    send: false
 ---
 
 # .NET Framework Assessment Agent (`@dotnet-assessment`)

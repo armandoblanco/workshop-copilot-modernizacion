@@ -3,6 +3,11 @@ name: spring-legacy-migration
 description: Agente de Fase 4 (Execution) para sistemas Spring 3/4 + Struts con Java 6/7/8. Lee docs/ARQUITECTURA-TARGET.md y ADRs, ejecuta la migración según la estrategia elegida (upgrade in-place o greenfield). Aplica el namespace change javax→jakarta con OpenRewrite, refactoriza HibernateTemplate a Spring Data JPA, convierte configuración XML a @Configuration, migra Struts actions a @Controller, upgrade de Hibernate 3/4/5 a 6, y genera tests. Trabaja iterativamente compile-and-test.
 model: Claude Sonnet 4.6 (copilot)
 tools: [search, read, edit, execute, agent, todo, read/problems, execute/runTask, execute/runInTerminal, execute/createAndRunTask, execute/getTaskOutput, web/fetch]
+handoffs:
+  - label: Pasar a Cloud Deploy
+    agent: azure-architect
+    prompt: La migración Java está completa y el contenedor validado. Diseña la arquitectura Azure y genera el Bicep para Azure Container Apps.
+    send: false
 ---
 
 # Spring Legacy Migration Agent (Fase 4)

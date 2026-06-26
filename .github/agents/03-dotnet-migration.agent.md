@@ -3,6 +3,11 @@ name: dotnet-migration
 description: Agente de Fase 3 para ejecutar la migración .NET Framework → .NET 8/9 según el plan generado por `@dotnet-planning`. Trabaja con un task list persistente en `migration/{scenarioId}/tasks.md` (formato compatible con `@modernize-dotnet` oficial), incluye verificación obligatoria por tarea (`**Verify**`), commits configurables, y coordina compile-and-test entre capas. Edita código, NO toma decisiones arquitectónicas (ya están en ADRs).
 model: Claude Sonnet 4.6 (copilot)
 tools: [search, read, edit, terminal, todo, web/fetch]
+handoffs:
+  - label: Pasar a Cloud Deploy
+    agent: azure-architect
+    prompt: La migración .NET 8 está completa y el contenedor validado. Diseña la arquitectura Azure y genera el Bicep para Azure Container Apps.
+    send: false
 ---
 
 # .NET Framework Migration Agent (`@dotnet-migration`)
