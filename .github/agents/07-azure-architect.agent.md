@@ -105,87 +105,97 @@ Compara **3 patrones** y elige uno default + 2 alternativos. Tabla comparativa e
 
 #### 4.1 C4 Container
 
-```mermaid
-C4Container
-    title Container diagram - {{ProjectName}} en Azure
+```
+C4 Container — {{ProjectName}} en Azure
 
-    Person(user, "Usuario", "Empleado banco")
-    Person(admin, "Admin", "Operaciones")
-
-    System_Boundary(azure, "Azure - eastus2") {
-        Container(fd, "Front Door", "Azure Front Door Premium", "WAF + CDN + global LB")
-        Container(app, "App Service", "ASP.NET Core 8 - P1v3", "Web + API")
-        Container(func, "Functions", "isolated .NET 8 - EP1", "Workers async")
-        ContainerDb(sql, "Azure SQL", "GP_Gen5_4 - 250 GB", "Datos transaccionales")
-        ContainerDb(redis, "Redis Cache", "C2 Standard", "Cache + sessions")
-        Container(sb, "Service Bus", "Standard", "Mensajeria")
-        Container(kv, "Key Vault", "Standard", "Secretos")
-        Container(st, "Storage", "GRS Hot", "Blobs / archivos")
-        Container(ai, "App Insights", "Workspace-based", "APM + logs")
-    }
-
-    Rel(user, fd, "HTTPS")
-    Rel(admin, fd, "HTTPS")
-    Rel(fd, app, "HTTPS via PE")
-    Rel(app, sql, "TDS via PE")
-    Rel(app, redis, "TLS via PE")
-    Rel(app, kv, "MSI")
-    Rel(app, sb, "AMQP")
-    Rel(sb, func, "trigger")
-    Rel(func, sql, "TDS via PE")
-    Rel(app, st, "HTTPS via PE")
-    Rel(app, ai, "ingestion")
-    Rel(func, ai, "ingestion")
+[Usuario]  [Admin]
+    |          |
+    +----+-----+
+         | HTTPS
+         v
++-------------------------+
+| Front Door Premium      |  WAF + CDN + global LB
++-------------------------+
+         | HTTPS via PE
+         v
++---------------------------------------------+  Azure - eastus2
+|  +-------------------+  +----------------+  |
+|  | App Service P1v3  |  | Functions EP1  |  |  Web+API / Workers async
+|  | ASP.NET Core 8    |--| .NET 8 isolated|  |
+|  +--------+----------+  +-------+--------+  |
+|           |                     |            |
+|    +------+------+------+  TDS via PE        |
+|    |      |      |      |       |            |
+|    v      v      v      v       v            |
+|  [SQL]  [Redis] [KV]  [SB] --> [SQL]        |  TDS/TLS/MSI/AMQP
+|  Azure  Cache   Key   Svc  trigger           |
+|  SQL    C2Std   Vault Bus                    |
+|  250GB                                       |
+|    +------+------+                           |
+|    v             v                           |
+|  [Storage]   [App Insights]                  |  Blobs / APM + logs
+|  GRS Hot     Workspace-based                 |
++---------------------------------------------+
 ```
 
 #### 4.2 Deployment / Network
 
-```mermaid
-flowchart TB
-    subgraph Internet
-        U[Usuarios] --> FD[Azure Front Door + WAF]
-    end
-    subgraph hub[VNet Hub - 10.0.0.0/16]
-        FW[Azure Firewall]
-        BAS[Bastion]
-    end
-    subgraph spoke[VNet Spoke App - 10.1.0.0/16]
-        subgraph snetApp[snet-app /24]
-            APP[App Service - VNet integrated]
-        end
-        subgraph snetData[snet-data /24]
-            PESQL[PE Azure SQL]
-            PERedis[PE Redis]
-            PEKV[PE Key Vault]
-            PESt[PE Storage]
-        end
-        subgraph snetPrivDns[snet-privdns /27]
-            DNS[Private DNS]
-        end
-    end
-    FD -->|Private Link| APP
-    APP --> PESQL
-    APP --> PERedis
-    APP --> PEKV
-    APP --> PESt
-    hub --- spoke
+```
+Deployment / Network
+
+Internet
+  [Usuarios] --> [Front Door + WAF]
+                        |
+                        | Private Link
+                        v
++-- VNet Hub (10.0.0.0/16) ----------+
+|   [Firewall]   [Bastion]           |
++---------+--------------------------+
+          | VNet Peering
+          v
++-- VNet Spoke App (10.1.0.0/16) -------------------+
+|                                                    |
+|  +-- snet-app /24 ---------+                      |
+|  |  [App Service]           |                      |
+|  |  (VNet integrated)       |                      |
+|  +---------+----------------+                      |
+|            |                                       |
+|            v                                       |
+|  +-- snet-data /24 --------+                      |
+|  |  [PE Azure SQL]          |                      |
+|  |  [PE Redis]              |                      |
+|  |  [PE Key Vault]          |                      |
+|  |  [PE Storage]            |                      |
+|  +--------------------------+                      |
+|                                                    |
+|  +-- snet-privdns /27 -----+                      |
+|  |  [Private DNS]           |                      |
+|  +--------------------------+                      |
++----------------------------------------------------+
 ```
 
 #### 4.3 Data Flow + Trust Boundaries
 
-```mermaid
-flowchart LR
-    classDef untrusted fill:#fee
-    classDef trusted fill:#efe
-    U[Usuario]:::untrusted -->|1. JWT| AAD[Entra ID]
-    U -->|2. token| FD[Front Door + WAF]:::untrusted
-    FD -->|3. mTLS| APP[App Service]:::trusted
-    APP -->|4. MSI| KV[Key Vault]:::trusted
-    APP -->|5. TDS+TLS| SQL[(Azure SQL)]:::trusted
-    APP -->|6. emit event| SB[Service Bus]:::trusted
-    SB -->|7. trigger| FN[Function]:::trusted
-    FN -->|8. write| SQL
-    APP -.->|telemetry| AI[App Insights]:::trusted
+```
+Data Flow + Trust Boundaries
+
+  UNTRUSTED ZONE                TRUSTED ZONE
+  ─────────────────────────────────────────────────────
+  [Usuario] --1.JWT---------> [Entra ID]
+      |
+      +--2.token-----------> [Front Door + WAF]
+                                    |
+                                    +--3.mTLS----------> [App Service]
+                                                              |
+                                    +---------4.MSI----------> [Key Vault]
+                                    +---------5.TDS+TLS-------> [Azure SQL]
+                                    +---------6.emit event----> [Service Bus]
+                                    +-.-.-.-.telemetry-.-.-.-.> [App Insights]
+                                                              |
+                                              [Service Bus] --7.trigger--> [Function]
+                                                                               |
+                                                                      8.write v
+                                                                          [Azure SQL]
 ```
 
 ### Paso 5 — Componentes con SKUs
