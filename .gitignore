@@ -1,0 +1,24 @@
+# .NET
+bin/ obj/ .vs/ *.user publish/
+
+# Java / Maven
+target/ *.class
+
+# Docker
+.dockerignore
+
+# Azure
+.azure/
+
+# Credenciales — NUNCA subas estos archivos
+*.env .env.local *.pem *.key service-principal.json
+
+# OS
+.DS_Store Thumbs.db
+
+# Generados por Copilot durante el taller
+docs/assessment-dotnet.md
+docs/assessment-java.md
+spring-framework-petclinic/plan.md
+spring-framework-petclinic/progress.md
+.github/modernize/

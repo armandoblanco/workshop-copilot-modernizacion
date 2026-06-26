@@ -1,0 +1,70 @@
+{
+  "name": "Workshop: Modernización de Apps con GitHub Copilot",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "8.0"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "onCreateCommand": "bash /workspaces/workshop-copilot-modernizacion/.devcontainer/install-java.sh",
+
+  "remoteEnv": {
+    "JAVA_HOME_8":  "/usr/lib/jvm/temurin-8",
+    "JAVA_HOME_21": "/usr/lib/jvm/temurin-21",
+    "JAVA_HOME":    "/usr/lib/jvm/temurin-21",
+    "PATH":         "${PATH}:/usr/lib/jvm/temurin-21/bin"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "vscjava.vscode-java-pack",
+        "ms-dotnettools.csharp",
+        "ms-azuretools.vscode-bicep",
+        "ms-azuretools.vscode-azurecontainerapps",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.azure-account",
+        "GitHub.vscode-pull-request-github"
+      ],
+      "settings": {
+        "chat.agent.enabled": true,
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-1.8",
+            "path": "/usr/lib/jvm/temurin-8"
+          },
+          {
+            "name": "JavaSE-21",
+            "path": "/usr/lib/jvm/temurin-21",
+            "default": true
+          }
+        ],
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  "postCreateCommand": "echo '=== Verificando toolchain ===' && dotnet --version && java -version && mvn --version && docker --version && az --version && echo '=== OK ==='",
+
+  "forwardPorts": [5000, 8080, 8081],
+
+  "portsAttributes": {
+    "5000": { "label": "App .NET (local)" },
+    "8080": { "label": "App Java / contenedor" },
+    "8081": { "label": "Alternativo" }
+  },
+
+  "remoteUser": "vscode"
+}
