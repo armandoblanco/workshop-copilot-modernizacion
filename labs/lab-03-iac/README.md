@@ -18,7 +18,7 @@ Usar el agente `@azure-architect` — **Fase 4 del playbook** — para generar l
 
 ## Flujo del lab
 
-```
+```mermaid
 flowchart LR
   A([Credenciales Azure]) --> B
 

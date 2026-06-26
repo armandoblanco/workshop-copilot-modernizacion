@@ -26,7 +26,7 @@ Al terminar tendrás la app Spring Framework completamente modernizada a Spring 
 
 ## Flujo del lab
 
-```
+```mermaid
 flowchart LR
   A([Clonar legacy]) --> B
 

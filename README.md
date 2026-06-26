@@ -16,7 +16,7 @@ Taller práctico de **3 horas** para equipos de desarrollo. Usando GitHub Copilo
 
 Este taller aplica las **Fases 1, 2, 3 y 4** del playbook de modernización:
 
-```
+```mermaid
 flowchart LR
     F1["Fase 1\nAssessment\n¿qué hay?"]:::req
     F2["Fase 2\nPlanning\n¿hacia dónde?"]:::req
@@ -34,7 +34,7 @@ Cada fase tiene un agente dedicado. Los agentes se invocan desde **Copilot Chat 
 
 ## Flujo del taller
 
-```
+```mermaid
 flowchart TD
   A([Setup: clonar repos legacy]) --> B
 

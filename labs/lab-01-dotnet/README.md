@@ -26,7 +26,7 @@ Al terminar tendrás un reporte de deuda técnica, un conjunto de ADRs con las d
 
 ## Flujo del lab
 
-```
+```mermaid
 flowchart LR
   A([Clonar legacy]) --> B
 
