@@ -1,4 +1,4 @@
-# Lab 02 — Upgrade Java 8 + Spring Framework → Java 21 + Spring Boot 3.x
+# Lab 02 — Modernización Java EE + Ant → Jakarta EE 10 + Maven + Spring Framework 6.2
 
 > **Modo Copilot en este lab: Agente**
 >
@@ -14,13 +14,13 @@
 
 Recorrer las **Fases 1, 2 y 3** del playbook para la ruta **Spring legacy** usando los agentes `@spring-legacy-assessment`, `@spring-legacy-planning` y `@spring-legacy-migration`.
 
-Al terminar tendrás la app Spring Framework completamente modernizada a Spring Boot 3.x / Java 21 con el namespace `javax.*` migrado a `jakarta.*` usando OpenRewrite, y un Dockerfile listo para Azure Container Apps.
+Al terminar tendrás la app Java EE modernizada a **Jakarta EE 10 + Spring Framework 6.2**, migrada de **Ant a Maven**, con el namespace `javax.*` reemplazado por `jakarta.*`, y un Dockerfile listo para Azure Container Apps.
 
 ---
 
 ## Código fuente
 
-[`Azure-Samples/java-migration-copilot-samples — ContosoUniversity`](https://github.com/Azure-Samples/java-migration-copilot-samples/tree/main/ContosoUniversity) — Aplicación de gestión universitaria sobre .NET Framework 4.8 con dependencias on-premise (MSMQ, sistema de archivos local). Tiene `Global.asax`, `Web.config`, `packages.config`, `Controllers/`, `Services/` y `Uploads/`. Es el proyecto de referencia del taller para demostrar modernización con los agentes del playbook.
+[`Azure-Samples/java-migration-copilot-samples — jakarta-ee/student-web-app`](https://github.com/Azure-Samples/java-migration-copilot-samples/tree/main/jakarta-ee/student-web-app) — Aplicación web de gestión de estudiantes sobre **Java EE + Spring MVC**, build con **Ant**, desplegada en **Open Liberty**. Mezcla servlets tradicionales y Spring MVC. Tiene `javax.*` imports, configuración XML de Spring, y `build.xml`. La ruta de modernización: Ant → Maven, Java EE → Jakarta EE 10, Spring Framework 5.3 → 6.2.
 
 ---
 
@@ -36,7 +36,7 @@ flowchart LR
     D["@spring-legacy-migration\nOpenRewrite + upgrade + Dockerfile"]
   end
 
-  D --> E([mvnw spring-boot:run — Java 21])
+  D --> E([mvn spring-boot:run — Jakarta EE 10])
   E --> F([docker build + run — validar contenedor])
 ```
 
@@ -56,18 +56,20 @@ git clone https://github.com/Azure-Samples/java-migration-copilot-samples.git le
 
 > Verifica que VS Code sigue abierto en la **raíz del workshop**. El árbol de archivos debe mostrar `labs/`, `infra/`, `legacy/`, etc. en el nivel superior.
 
-El proyecto objetivo está en `legacy/java/ContosoUniversity/`. Explora la estructura antes de usar Copilot:
+El proyecto objetivo está en `legacy/java/jakarta-ee/student-web-app/`. Explora la estructura antes de usar Copilot:
 ```
-legacy/java/ContosoUniversity/
-├── Controllers/         ← StudentController, CourseController, InstructorController...
-├── Models/              ← Entidades de dominio (Student, Course, Department, Instructor)
-├── Data/                ← SchoolContext + inicializador de BD
-├── Services/            ← NotificationService con MSMQ — dependencia on-premise a migrar
-├── Uploads/             ← Almacenamiento local de materiales docentes → Azure Blob Storage
-├── App_Start/           ← RouteConfig, FilterConfig
-├── Web.config           ← Connection string a LocalDB + config MSMQ
-├── Global.asax          ← Entry point legacy
-└── packages.config      ← NuGet legacy
+legacy/java/jakarta-ee/student-web-app/
+├── src/org/sample/azure/student/   ← Servlets + Spring MVC controllers con javax.* imports
+├── WebContent/
+│   ├── WEB-INF/
+│   │   ├── web.xml             ← Configuración de servlets (estilo Java EE legacy)
+│   │   └── spring-config.xml   ← Configuración XML de Spring (desaparece en Fase 3)
+│   └── *.jsp               ← Vistas JSP
+├── database/               ← Scripts SQL de inicialización
+├── liberty_config/         ← Configuración de Open Liberty
+├── build.xml               ← Build Ant — se reemplaza con pom.xml en Fase 3
+├── build.properties        ← Propiedades del build Ant
+└── Dockerfile              ← Punto de partida para contenerizar
 ```
 
 ---
